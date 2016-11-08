@@ -34,7 +34,7 @@ Metrics are sent to InfluxDB with the following values and tags:
 
 * cd burrower
 * docker build .
-* docker run -it --env BURROW_HOST=127.0.0.1 --env BURROWER_WRITER=influxdb --env INFLUXDB_HOST=127.0.0.1 <image>
+* docker run -it --env BURROW_HOST=127.0.0.1 --env BURROWER_WRITER=influxdb --env INFLUXDB_HOST=127.0.0.1 imageName
 
 ## Planned Features
 
