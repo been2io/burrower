@@ -2,8 +2,9 @@ package com.github.splee.burrower
 
 import com.github.splee.burrower.lag.{BurrowConsumerStatus, BurrowPartitionLag, Lag, LagGroup}
 import com.github.splee.burrower.write.{ConsoleWriter, InfluxWriter, Writer}
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.{Config, ConfigFactory, ConfigParseOptions}
 import com.typesafe.scalalogging.LazyLogging
+
 import scalaj.http._
 import play.api.libs.json._
 
@@ -11,10 +12,8 @@ object OffsetMonitor extends LazyLogging {
 
   def main(args: Array[String]): Unit = {
     val conf = ConfigFactory.load()
-
-    val bHost = conf.getString("burrower.burrow.host")
-    val bPort = conf.getInt("burrower.burrow.port")
-
+    var bHost:String = sys.env.getOrElse("BURROW_HOST",conf.getString("burrower.burrow.host")).toString
+    val bPort = sys.env.getOrElse("BURROW_PORT",conf.getInt("burrower.burrow.port")).toString.toInt
     val writer = buildWriter(conf)
 
     logger.info("Creating monitor...")
@@ -30,7 +29,7 @@ object OffsetMonitor extends LazyLogging {
   }
 
   def buildWriter(conf: Config): Writer = {
-    val writerType = conf.getString("burrower.writer")
+    val writerType = sys.env.getOrElse("BURROWER_WRITER",conf.getString("burrower.writer"))
     logger.info(f"Creating $writerType writer...")
 
     if (writerType == "console")
@@ -46,18 +45,18 @@ object OffsetMonitor extends LazyLogging {
 
   def buildInfluxWriter(conf: Config): InfluxWriter =
     new InfluxWriter(
-      conf.getString("burrower.influx.host"),
-      conf.getInt("burrower.influx.port"),
-      conf.getString("burrower.influx.database"),
-      conf.getString("burrower.influx.series"),
-      conf.getString("burrower.influx.userName"),
-      conf.getString("burrower.influx.password")
+      sys.env.getOrElse("INFLUXDB_HOST",conf.getString("burrower.influx.host")),
+      sys.env.getOrElse("INFLUXDB_PORT",conf.getInt("burrower.influx.port")).toString.toInt,
+      sys.env.getOrElse("INFLUXDB_DATABASE",conf.getString("burrower.influx.database")),
+      sys.env.getOrElse("INFLUXDB_SERIES",conf.getString("burrower.influx.series")),
+      sys.env.getOrElse("INFLUXDB_USER",conf.getString("burrower.influx.userName")),
+      sys.env.getOrElse("INFLUXDB_PASSWORD",conf.getString("burrower.influx.password"))
     )
 }
 
 class OffsetMonitor (
-  burrowHost: String,
-  burrowPort: Number,
+  burrowHost: String="localhost",
+  burrowPort: Number=8000,
   writer: Writer
 ) extends Runnable with LazyLogging {
 

@@ -10,12 +10,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 
 class InfluxWriter(
-  influxHost: String,
-  influxPort: Int,
-  influxDatabase: String,
-  influxSeries: String,
-  userName: String,
-  password: String
+  influxHost: String="localhost",
+  influxPort: Int=8086,
+  influxDatabase: String="burrower",
+  influxSeries: String="kafka_consumer_lag",
+  userName: String="",
+  password: String=""
 ) extends Writer with LazyLogging {
 
   val influxdb = InfluxDB.connect(influxHost, influxPort, userName, password)
@@ -36,7 +36,7 @@ class InfluxWriter(
         case Success(v) =>
           logger.debug("Metrics sent to InfluxDB")
         case Failure(e) =>
-          logger.debug(f"Sending metrics to InfluxDB failed: ${e.getMessage}")
+          logger.error(f"Sending metrics to InfluxDB failed: ${e.getMessage}")
       })
   }
 }
