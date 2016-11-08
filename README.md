@@ -31,9 +31,11 @@ Metrics are sent to InfluxDB with the following values and tags:
 1. `java -cp target/scala-2.11/burrower-0.2-SNAPSHOT.jar:conf/ com.github.splee.burrower.OffsetMonitor`
 
 ## Docker build & Run
+
 * cd burrower
 * docker build .
 * docker run -it --env BURROW_HOST=127.0.0.1 --env BURROWER_WRITER=influxdb --env INFLUXDB_HOST=127.0.0.1 <image>
+
 ## Planned Features
 
 * Ability to specify any class implmenting `com.github.splee.burrower.write.Writer` to write metrics to custom back ends.
