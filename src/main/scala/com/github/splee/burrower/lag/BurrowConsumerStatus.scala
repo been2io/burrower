@@ -14,6 +14,6 @@ case class BurrowConsumerStatus(
   partitions: List[BurrowPartitionLag],
   partition_count: Int,
   maxlag: Option[BurrowPartitionLag],
-  totallag: Int
+  totallag: Long
 )
 
